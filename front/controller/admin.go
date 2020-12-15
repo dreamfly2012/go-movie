@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"go-movie/db"
 	"go-movie/model"
 	"net/http"
 
@@ -33,11 +34,15 @@ func APlogin(c *gin.Context) {
 		})
 	}
 
-	fmt.Println(user.Username)
-	fmt.Println(user.Password)
+	db := db.Init()
+
+	db.Model(model.User{}).Where("username = ? and password = ?", user.Username, user.Password).First(&user)
+
+	fmt.Println(user)
+
 	c.JSON(200, gin.H{
 		"code":     20001,
-		"username": user.Password,
+		"username": user.Username,
 		"password": user.Password,
 	})
 }
