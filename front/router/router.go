@@ -41,6 +41,7 @@ func Init() {
 	admin.Use(checkAuth)
 
 	r.GET("/admin/login", controller.Alogin)
+	r.POST("/admin/login", controller.APlogin)
 	admin.GET("/index", controller.Aindex)
 
 	r.GET("/ping", func(c *gin.Context) {
