@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
@@ -40,7 +41,14 @@ func Init() {
 	admin.Use(sessions.Sessions("mysession", store))
 	admin.Use(checkAuth)
 
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true                                                                                                 //允许所有域名
+	config.AllowMethods = []string{"GET", "POST", "OPTIONS"}                                                                      //允许请求的方法
+	config.AllowHeaders = []string{"tus-resumable", "upload-length", "upload-metadata", "cache-control", "x-requested-with", "*"} //允许的Header
+	r.Use(cors.New(config))
+
 	r.GET("/admin/login", controller.Alogin)
+	r.POST("/admin/login", controller.APlogin)
 	admin.GET("/index", controller.Aindex)
 
 	r.GET("/ping", func(c *gin.Context) {
