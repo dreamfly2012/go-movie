@@ -49,6 +49,9 @@ func Init() {
 
 	r.GET("/admin/login", controller.Alogin)
 	r.POST("/admin/login", controller.APlogin)
+	r.GET("/admin/info", controller.AInfo)
+	r.GET("/admin/list", controller.AList)
+	r.POST("/category/add", controller.CategoryAdd)
 	admin.GET("/index", controller.Aindex)
 
 	r.GET("/ping", func(c *gin.Context) {

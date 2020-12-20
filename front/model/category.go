@@ -3,5 +3,5 @@ package model
 //Category 类型
 type Category struct {
 	ID   int
-	name string
+	Name string `form:"name" json:"name"`
 }

@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"fmt"
 	"go-movie/db"
 	"go-movie/model"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,8 +24,9 @@ func Alogin(c *gin.Context) {
 }
 
 func APlogin(c *gin.Context) {
-	user := &model.User{}
-	err := c.ShouldBindJSON(user)
+	admin := &model.Admin{}
+	user := model.Admin{}
+	err := c.ShouldBindJSON(admin)
 
 	if err != nil {
 		c.JSON(200, gin.H{
@@ -36,18 +37,81 @@ func APlogin(c *gin.Context) {
 
 	db := db.Init()
 
-	db.Model(model.User{}).Where("username = ? and password = ?", user.Username, user.Password).First(&user)
+	result := db.Model(model.Admin{}).Where("username = ? and password = ?", admin.Username, admin.Password).First(&user).RecordNotFound()
 
-	fmt.Println(user)
+	if result == true {
+		c.JSON(200, gin.H{
+			"code": 20001,
+			"data": "用户名密码错误",
+		})
+	} else {
+		c.JSON(200, gin.H{
+			"code": 20000,
+			"data": "admin-token",
+		})
+	}
 
+}
+
+// AInfo 用户信息
+func AInfo(c *gin.Context) {
 	c.JSON(200, gin.H{
-		"code":     20001,
-		"username": user.Username,
-		"password": user.Password,
+		"code": 20000,
+		"data": "admin-token",
 	})
 }
 
-//Index 首页
+//AList 列表
+func AList(c *gin.Context) {
+	posts := []model.Post{}
+
+	pageindex := c.DefaultQuery("currentPage", "1")
+
+	currentPage, _ := strconv.Atoi(pageindex)
+
+	db := db.Init()
+	var totalNum int
+
+	pagesize := 10
+	db.Model(model.Post{}).Count(&totalNum)
+	totalPage := totalNum / pagesize
+
+	db.Model(model.Post{}).Order("id desc").Offset((currentPage - 1) * pagesize).Limit(pagesize).Find(&posts)
+
+	c.JSON(200, gin.H{
+		"code": 20000,
+		"data": gin.H{
+			"total": totalPage,
+			"data":  posts,
+		},
+	})
+}
+
+//CategoryAdd 添加分类
+func CategoryAdd(c *gin.Context) {
+	category := &model.Category{}
+
+	err := c.ShouldBindJSON(category)
+
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code": 20001,
+			"data": err,
+		})
+	}
+
+	db := db.Init()
+
+	db.Model(model.Category{}).Create(category)
+
+	c.JSON(200, gin.H{
+		"code": 20000,
+		"data": "success",
+	})
+
+}
+
+//Aindex 首页
 func Aindex(c *gin.Context) {
 	c.HTML(
 		// Set the HTTP status to 200 (OK)
