@@ -13,26 +13,9 @@
           {{ scope.$index + 1 }}
         </template>
       </el-table-column>
-      <el-table-column label="Title">
+      <el-table-column label="Name">
         <template slot-scope="scope">
-          {{ scope.row.Title }}
-        </template>
-      </el-table-column>
-
-      <el-table-column label="Desc" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.Desc }}
-        </template>
-      </el-table-column>
-      <el-table-column  label="Views" width="110" align="center">
-        <template slot-scope="scope">
-           {{ scope.row.Views }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" prop="created_at" label="Display_time" >
-        <template slot-scope="scope">
-          <i class="el-icon-time" />
-          <span>{{ scope.row.Created }}</span>
+          {{ scope.row.name }}
         </template>
       </el-table-column>
 
@@ -54,7 +37,7 @@
 </template>
 
 <script>
-import { getList } from '@/api/post'
+import { getList } from '@/api/category'
 
 export default {
   filters: {
@@ -93,7 +76,7 @@ export default {
     },
     edit(row){
       console.log(row)
-      this.$router.push("/list/edit?id="+row.ID);
+      this.$router.push("/category/edit?id="+row.ID);
     },
     fetchData() {
       this.listLoading = true

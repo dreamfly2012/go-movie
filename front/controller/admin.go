@@ -5,7 +5,6 @@ import (
 	"go-movie/model"
 	"net/http"
 	"strconv"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -31,7 +30,8 @@ func APlogin(c *gin.Context) {
 	if err != nil {
 		c.JSON(200, gin.H{
 			"code": 20001,
-			"data": err,
+			"data": "",
+			"message":err,
 		})
 	}
 
@@ -42,12 +42,14 @@ func APlogin(c *gin.Context) {
 	if result == true {
 		c.JSON(200, gin.H{
 			"code": 20001,
-			"data": "用户名密码错误",
+			"message":"用户名密码错误",
+			"data": "",
 		})
 	} else {
 		c.JSON(200, gin.H{
 			"code": 20000,
-			"data": "admin-token",
+			"message": "success",
+			"data": "",
 		})
 	}
 
@@ -87,6 +89,51 @@ func AList(c *gin.Context) {
 	})
 }
 
+//CategoryList
+func CategoryList(c *gin.Context){
+	categories := []model.Category{}
+
+	pageindex := c.DefaultQuery("currentPage", "1")
+
+	currentPage, _ := strconv.Atoi(pageindex)
+
+	db := db.Init()
+	var totalNum int
+
+	pagesize := 10
+	db.Model(model.Category{}).Count(&totalNum)
+	totalPage := totalNum / pagesize
+
+	db.Model(model.Category{}).Order("id desc").Offset((currentPage - 1) * pagesize).Limit(pagesize).Find(&categories)
+
+	c.JSON(200, gin.H{
+		"code": 20000,
+		"data": gin.H{
+			"total": totalPage,
+			"data":  categories,
+		},
+	})
+}
+
+
+//CategoryGet 获取
+func CategoryGet(c *gin.Context) {
+	category := &model.Category{}
+
+	id := c.DefaultQuery("id", "1")
+
+	db := db.Init()
+
+	db.Model(model.Category{}).Where("id = ? ", id).First(&category)
+
+	c.JSON(200, gin.H{
+		"code": 20000,
+		"data": category,
+		"message":"success",
+	})
+
+}
+
 //CategoryAdd 添加分类
 func CategoryAdd(c *gin.Context) {
 	category := &model.Category{}
@@ -103,6 +150,33 @@ func CategoryAdd(c *gin.Context) {
 	db := db.Init()
 
 	db.Model(model.Category{}).Create(category)
+
+	c.JSON(200, gin.H{
+		"code": 20000,
+		"data": "success",
+	})
+
+}
+
+//CategoryEdit 修改分类
+func CategoryEdit(c *gin.Context) {
+	category := &model.Category{}
+
+	err := c.ShouldBindJSON(category)
+
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code": 20001,
+			"data": err,
+		})
+
+		return
+	}
+
+
+	db := db.Init()
+
+	db.Model(model.Category{}).Updates(&category)
 
 	c.JSON(200, gin.H{
 		"code": 20000,
