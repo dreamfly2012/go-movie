@@ -21,7 +21,7 @@
 
       <el-table-column align="center" label="operate" >
           <template slot-scope="scope">
-              <button @click="edit(scope.row)" >编辑</button>
+             <el-button size="mini" @click="edit(scope.row)">编辑</el-button>
           </template>
       </el-table-column>
     </el-table>

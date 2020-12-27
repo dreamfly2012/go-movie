@@ -15,30 +15,28 @@
       </el-table-column>
       <el-table-column label="Title">
         <template slot-scope="scope">
-          {{ scope.row.Title }}
+          {{ scope.row.title }}
         </template>
       </el-table-column>
 
       <el-table-column label="Desc" align="center">
         <template slot-scope="scope">
-          {{ scope.row.Desc }}
+          {{ scope.row.desc }}
         </template>
       </el-table-column>
       <el-table-column  label="Views" width="110" align="center">
         <template slot-scope="scope">
-           {{ scope.row.Views }}
+           {{ scope.row.views }}
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="created_at" label="Display_time" >
-        <template slot-scope="scope">
-          <i class="el-icon-time" />
-          <span>{{ scope.row.Created }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column align="center" prop="created" label="创建时间" :formatter="dateFormat"></el-table-column>
 
       <el-table-column align="center" label="operate" >
           <template slot-scope="scope">
-              <button @click="edit(scope.row)" >编辑</button>
+            <el-button
+          size="mini"
+          @click="edit(scope.row)">编辑</el-button>
+
           </template>
       </el-table-column>
     </el-table>
@@ -80,6 +78,11 @@ export default {
     this.fetchData()
   },
   methods: {
+     dateFormat:function(row,column){
+
+        var t=new Date(row.created);//row 表示一行数据, updateTime 表示要格式化的字段名称
+        return t.getFullYear()+"-"+(t.getMonth()+1)+"-"+t.getDate()+" "+t.getHours()+":"+t.getMinutes()+":"+t.getSeconds()
+    },
     current_change(currentPage){
       console.log(currentPage)
 
@@ -93,7 +96,7 @@ export default {
     },
     edit(row){
       console.log(row)
-      this.$router.push("/list/edit?id="+row.ID);
+      this.$router.push("/list/edit?id="+row.id);
     },
     fetchData() {
       this.listLoading = true
