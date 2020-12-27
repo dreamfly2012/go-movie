@@ -26,6 +26,7 @@ func Init() {
 	r.LoadHTMLGlob("templates/**/*")
 	r.StaticFS("/static", http.Dir("./static"))
 	r.StaticFS("/ueditor", http.Dir("./ueditor"))
+	r.StaticFS("/upload", http.Dir("./upload"))
 
 	//前端页面路由
 	r.GET("/", controller.Index)
@@ -47,17 +48,23 @@ func Init() {
 	config.AllowMethods = []string{"GET", "POST", "OPTIONS"}                                                                      //允许请求的方法
 	config.AllowHeaders = []string{"tus-resumable", "upload-length", "upload-metadata", "cache-control", "x-requested-with", "*"} //允许的Header
 	r.Use(cors.New(config))
-	
-	
+
 	//后台接口路由
+
 	r.GET("/admin/login", controller.Alogin)
 	r.POST("/admin/login", controller.APlogin)
 	r.GET("/admin/info", controller.AInfo)
 	r.GET("/admin/list", controller.AList)
 	r.POST("/category/add", controller.CategoryAdd)
 	r.POST("/category/edit", controller.CategoryEdit)
+	r.POST("/post/add", controller.PostAdd)
+	r.POST("/post/edit", controller.PostEdit)
+	r.GET("/post/get", controller.PostGet)
 	r.GET("/category/get", controller.CategoryGet)
 	r.GET("/category/list", controller.CategoryList)
+
+	r.POST("/post/upload", controller.Upload)
+
 	admin.GET("/index", controller.Aindex)
 
 	r.GET("/ping", func(c *gin.Context) {

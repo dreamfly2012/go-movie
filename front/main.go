@@ -7,6 +7,5 @@ import (
 //"go-movie/router"
 
 func main() {
-
 	router.Init()
 }

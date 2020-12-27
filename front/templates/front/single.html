@@ -14,7 +14,7 @@
                             <span class="views-count"><a href="#">{{ .post.Views }} 阅读</a></span>
                         </div>
                     </header>
-                    <div class="entry-content clearfix">
+                    <div class="entry-content clearfix" id="content">
                         {{ .post.Content | safe }}
                     </div>
                 </article>
@@ -24,5 +24,9 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+document.getElementById("content").innerHTML=marked(document.getElementById("content").innerHTML);
+</script>
 <!--Embed the footer.html template at this location-->
 {{ template "foot.html" .}}

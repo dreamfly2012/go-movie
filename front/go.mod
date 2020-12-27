@@ -12,5 +12,6 @@ require (
 	github.com/jinzhu/gorm v1.9.16
 	github.com/mdempsky/gocode v0.0.0-20200405233807-4acdcbdea79d // indirect
 	github.com/silenceper/gowatch v0.0.0-20201011022207-2725a3e5b521 // indirect
+	github.com/tencentyun/cos-go-sdk-v5 v0.7.16
 	golang.org/x/tools v0.0.0-20201211185031-d93e913c1a58 // indirect
 )

@@ -1,11 +1,21 @@
 package controller
 
 import (
+	"context"
+	"fmt"
 	"go-movie/db"
 	"go-movie/model"
+	"go-movie/util"
+	"math/rand"
 	"net/http"
+	"net/url"
+	"os"
+	"path"
 	"strconv"
+	"time"
+
 	"github.com/gin-gonic/gin"
+	"github.com/tencentyun/cos-go-sdk-v5"
 )
 
 //Login 登录页面
@@ -29,9 +39,9 @@ func APlogin(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(200, gin.H{
-			"code": 20001,
-			"data": "",
-			"message":err,
+			"code":    20001,
+			"data":    "",
+			"message": err,
 		})
 	}
 
@@ -41,15 +51,15 @@ func APlogin(c *gin.Context) {
 
 	if result == true {
 		c.JSON(200, gin.H{
-			"code": 20001,
-			"message":"用户名密码错误",
-			"data": "",
+			"code":    20001,
+			"message": "用户名密码错误",
+			"data":    "",
 		})
 	} else {
 		c.JSON(200, gin.H{
-			"code": 20000,
+			"code":    20000,
 			"message": "success",
-			"data": "",
+			"data":    "",
 		})
 	}
 
@@ -89,8 +99,8 @@ func AList(c *gin.Context) {
 	})
 }
 
-//CategoryList
-func CategoryList(c *gin.Context){
+//CategoryList 分类列表
+func CategoryList(c *gin.Context) {
 	categories := []model.Category{}
 
 	pageindex := c.DefaultQuery("currentPage", "1")
@@ -115,7 +125,6 @@ func CategoryList(c *gin.Context){
 	})
 }
 
-
 //CategoryGet 获取
 func CategoryGet(c *gin.Context) {
 	category := &model.Category{}
@@ -127,9 +136,9 @@ func CategoryGet(c *gin.Context) {
 	db.Model(model.Category{}).Where("id = ? ", id).First(&category)
 
 	c.JSON(200, gin.H{
-		"code": 20000,
-		"data": category,
-		"message":"success",
+		"code":    20000,
+		"data":    category,
+		"message": "success",
 	})
 
 }
@@ -173,7 +182,6 @@ func CategoryEdit(c *gin.Context) {
 		return
 	}
 
-
 	db := db.Init()
 
 	db.Model(model.Category{}).Updates(&category)
@@ -183,6 +191,148 @@ func CategoryEdit(c *gin.Context) {
 		"data": "success",
 	})
 
+}
+
+//PostGet 文章获取
+func PostGet(c *gin.Context) {
+	post := &model.Post{}
+
+	id := c.DefaultQuery("id", "1")
+
+	db := db.Init()
+
+	db.Model(model.Post{}).Where("id = ? ", id).First(&post)
+
+	c.JSON(200, gin.H{
+		"code":    20000,
+		"data":    post,
+		"message": "success",
+	})
+
+}
+
+//PostAdd 文章添加
+func PostAdd(c *gin.Context) {
+	post := &model.Post{}
+
+	err := c.ShouldBindJSON(post)
+
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code": 20001,
+			"data": err,
+		})
+	}
+
+	db := db.Init()
+
+	db.Model(model.Post{}).Create(post)
+
+	c.JSON(200, gin.H{
+		"code": 20000,
+		"data": "success",
+	})
+}
+
+//PostEdit 文章修改
+func PostEdit(c *gin.Context) {
+	post := &model.Post{}
+
+	err := c.ShouldBindJSON(post)
+
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code": 20001,
+			"data": err,
+		})
+
+		return
+	}
+
+	db := db.Init()
+
+	db.Model(model.Post{}).Omit("id").Where("id = ? ", post.ID).Updates(post)
+
+	c.JSON(200, gin.H{
+		"code": 20000,
+		"data": "success",
+	})
+
+}
+
+//Upload 文件上传
+func Upload(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err == nil {
+		Path := "./upload"
+		t := time.Now()
+		date := t.Format("20060102")
+		pathTmp := Path + "/" + date + "/"
+		if isDirExists(pathTmp) {
+			fmt.Println("目录存在")
+		} else {
+			fmt.Println("目录不存在")
+			err := os.Mkdir(pathTmp, 0777)
+			if err != nil {
+				//log.Fatal(err)
+				c.JSON(200, gin.H{"code": 200001, "msg": "创建目录失败"})
+			}
+		}
+		//文件名
+		fileName := strconv.FormatInt(time.Now().Unix(), 10) + strconv.Itoa(rand.Intn(999999-100000)+100000) + path.Ext(file.Filename)
+		uperr := c.SaveUploadedFile(file, pathTmp+fileName)
+
+		fmt.Println(fileName)
+		fmt.Println(pathTmp)
+
+		url := uploadYun(fileName, pathTmp+fileName)
+
+		if uperr == nil {
+			c.JSON(200, gin.H{"code": 20000, "msg": "上传成功", "data": url})
+		} else {
+			c.JSON(200, gin.H{"code": 20002, "msg": "上传失败"})
+		}
+
+	} else {
+		c.JSON(200, gin.H{"code": 20003, "msg": "上传失败"})
+	}
+
+}
+
+//目录是否存在
+func isDirExists(filename string) bool {
+	_, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+func uploadYun(filename string, filepath string) string {
+	// 将 examplebucket-1250000000 和 COS_REGION 修改为真实的信息
+	myConfig := new(util.Config)
+	myConfig.InitConfig("config.ini")
+	bucket := myConfig.Read("server", "bucket")
+	region := myConfig.Read("server", "region")
+	SECRETID := myConfig.Read("server", "COS_SECRETID")
+	SECRETKEY := myConfig.Read("server", "COS_SECRETKEY")
+	u, _ := url.Parse("https://" + bucket + ".cos." + region + ".myqcloud.com")
+	b := &cos.BaseURL{BucketURL: u}
+	c := cos.NewClient(b, &http.Client{
+		Transport: &cos.AuthorizationTransport{
+			SecretID:  SECRETID,
+			SecretKey: SECRETKEY,
+		},
+	})
+	// 对象键（Key）是对象在存储桶中的唯一标识。
+	// 例如，在对象的访问域名 `examplebucket-1250000000.cos.COS_REGION.myqcloud.com/test/objectPut.go` 中，对象键为 test/objectPut.go
+
+	_, err := c.Object.PutFromFile(context.Background(), filename, filepath, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	return "https://" + bucket + ".cos." + region + ".myqcloud.com/" + filename
 }
 
 //Aindex 首页
