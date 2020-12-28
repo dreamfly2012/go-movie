@@ -5,7 +5,7 @@
         <el-input v-model="form.name" />
       </el-form-item>
 
-      <el-form-item label="">
+      <el-form-item label="URL">
         <el-input v-model="form.url" />
       </el-form-item>
 

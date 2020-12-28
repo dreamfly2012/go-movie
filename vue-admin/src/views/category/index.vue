@@ -19,6 +19,12 @@
         </template>
       </el-table-column>
 
+      <el-table-column label="URL">
+        <template slot-scope="scope">
+          {{ scope.row.url }}
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" label="operate" >
           <template slot-scope="scope">
              <el-button size="mini" @click="edit(scope.row)">编辑</el-button>

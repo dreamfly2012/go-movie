@@ -5,7 +5,7 @@
         <el-input v-model="form.name" />
       </el-form-item>
 
-       <el-form-item label="">
+       <el-form-item label="URL">
         <el-input v-model="form.url" />
       </el-form-item>
       <el-form-item>
@@ -56,7 +56,7 @@ export default {
     fetchData(){
         this.listLoading = true
         getItem({id:this.id}).then(response => {
-          this.form.name = response.data.name
+          this.form= response.data
           this.listLoading = false
         })
     },

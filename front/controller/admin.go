@@ -185,7 +185,7 @@ func CategoryEdit(c *gin.Context) {
 
 	db := db.Init()
 
-	db.Model(model.Category{}).Updates(&category)
+	db.Model(model.Category{}).Where("id = ?", category.ID).Updates(&category)
 
 	c.JSON(200, gin.H{
 		"code": 20000,
@@ -279,7 +279,9 @@ func TagEdit(c *gin.Context) {
 
 	db := db.Init()
 
-	db.Model(model.Tag{}).Updates(&tag)
+	fmt.Println(tag)
+
+	db.Model(model.Tag{}).Where("id = ?", tag.ID).Updates(&tag)
 
 	c.JSON(200, gin.H{
 		"code": 20000,

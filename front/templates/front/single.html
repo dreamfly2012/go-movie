@@ -8,8 +8,8 @@
                     <header class="entry-header">
                         <h1 class="entry-title">{{ .post.Title }}</h1>
                         <div class="entry-meta">
-                            <span class="post-category"><a href="#">Django 博客教程</a></span>
-                            <span class="post-date"><a href="#"><time class="entry-date" datetime="2012-11-09T23:15:57+00:00">2017年5月11日</time></a></span>
+                            <span class="post-category"><a href="#">{{.post.Cid|getCategoryName}}</a></span>
+                            <span class="post-date"><a href="#"><time class="entry-date" datetime="2012-11-09T23:15:57+00:00">{{.post.Created|formateDate}}</time></a></span>
                             
                             <span class="views-count"><a href="#">{{ .post.Views }} 阅读</a></span>
                         </div>
@@ -27,6 +27,10 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
 document.getElementById("content").innerHTML=marked(document.getElementById("content").innerHTML);
+fetch('/ajax/article/{{ .post.ID }}')
+  .then(response => response.json())
+  .then(json => console.log(json))
+  .catch(err => console.log('Request Failed', err)); 
 </script>
 <!--Embed the footer.html template at this location-->
 {{ template "foot.html" .}}

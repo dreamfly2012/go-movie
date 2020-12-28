@@ -1,16 +1,33 @@
 package router
 
 import (
+	"fmt"
 	"go-movie/controller"
+	"go-movie/db"
+	"go-movie/model"
 	"go-movie/util"
 	"html/template"
 	"net/http"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
+
+//获取分类名称
+func getCategoryName(cid int) string {
+	category := model.Category{}
+	db := db.Init()
+	db.Model(model.Category{}).Where("id = ?", cid).First(&category)
+	return category.Name
+}
+
+func formateDate(t time.Time) string {
+	year, month, day := t.Date()
+	return fmt.Sprintf("%d-%02d-%02d", year, month, day)
+}
 
 //Init 路由初始化
 func Init() {
@@ -21,6 +38,8 @@ func Init() {
 		"safe": func(str string) template.HTML {
 			return template.HTML(str)
 		},
+		"getCategoryName": getCategoryName,
+		"formateDate":     formateDate,
 	})
 
 	r.LoadHTMLGlob("templates/**/*")
@@ -33,7 +52,10 @@ func Init() {
 	r.GET("/about", controller.About)
 	r.GET("/article/:id", controller.Article)
 	r.GET("/page/:id", controller.Index)
+
 	r.GET("/category/:url/:id", controller.Category)
+	r.GET("/tag/:url/:id", controller.Tag)
+	r.GET("/ajax/article/:id", controller.AjaxArticle)
 
 	admin := r.Group("/admin")
 
@@ -56,13 +78,19 @@ func Init() {
 	r.POST("/admin/login", controller.APlogin)
 	r.GET("/admin/info", controller.AInfo)
 	r.GET("/admin/list", controller.AList)
-	r.POST("/admin/category/add", controller.CategoryAdd)
-	r.POST("/admin/category/edit", controller.CategoryEdit)
+
 	r.POST("/admin/post/add", controller.PostAdd)
 	r.POST("/admin/post/edit", controller.PostEdit)
 	r.GET("/admin/post/get", controller.PostGet)
 	r.GET("/admin/category/get", controller.CategoryGet)
 	r.GET("/admin/category/list", controller.CategoryList)
+	r.POST("/admin/category/add", controller.CategoryAdd)
+	r.POST("/admin/category/edit", controller.CategoryEdit)
+
+	r.GET("/admin/tag/get", controller.TagGet)
+	r.GET("/admin/tag/list", controller.TagList)
+	r.POST("/admin/tag/add", controller.TagAdd)
+	r.POST("/admin/tag/edit", controller.TagEdit)
 	r.POST("/admin/post/upload", controller.Upload)
 
 	admin.GET("/index", controller.Aindex)
