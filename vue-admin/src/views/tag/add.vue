@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { add } from '@/api/category'
+import { add } from '@/api/tag'
 
 
 export default {
@@ -40,7 +40,7 @@ export default {
         if(response.code !== 20000){
             this.$message('添加失败')
         }else{
-           this.$router.push("/category/index");
+           this.$router.push("/tag/index");
 
         }
 

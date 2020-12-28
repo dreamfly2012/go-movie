@@ -5,10 +5,9 @@
         <el-input v-model="form.name" />
       </el-form-item>
 
-      <el-form-item label="">
+       <el-form-item label="">
         <el-input v-model="form.url" />
       </el-form-item>
-
       <el-form-item>
         <el-button type="primary" @click="onSubmit">保存</el-button>
         <el-button @click="onCancel">取消</el-button>
@@ -18,33 +17,48 @@
 </template>
 
 <script>
-import { add } from '@/api/category'
+import { edit,getItem } from '@/api/tag'
 
 
 export default {
   data() {
     return {
-
+      id:"",
       form: {
         name: '',
-         url:'',
+        url:'',
       },
 
     }
   },
+   created() {
+
+      this.id = parseInt(this.$route.query.id)
+
+      this.fetchData()
+    },
   methods: {
+
     onSubmit() {
 
-      add({name:this.form.name,url:this.form.url}).then(response => {
+      edit({name:this.form.name,id:this.id,url:this.form.url}).then(response => {
 
         if(response.code !== 20000){
-            this.$message('添加失败')
+            this.$message(response.message)
         }else{
-           this.$router.push("/category/index");
+           this.$router.push("/tag/index");
 
         }
 
       })
+    },
+
+    fetchData(){
+        this.listLoading = true
+        getItem({id:this.id}).then(response => {
+          this.form.name = response.data.name
+          this.listLoading = false
+        })
     },
 
 

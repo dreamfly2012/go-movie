@@ -33,6 +33,7 @@ func Init() {
 	r.GET("/about", controller.About)
 	r.GET("/article/:id", controller.Article)
 	r.GET("/page/:id", controller.Index)
+	r.GET("/category/:url/:id", controller.Category)
 
 	admin := r.Group("/admin")
 
@@ -55,15 +56,14 @@ func Init() {
 	r.POST("/admin/login", controller.APlogin)
 	r.GET("/admin/info", controller.AInfo)
 	r.GET("/admin/list", controller.AList)
-	r.POST("/category/add", controller.CategoryAdd)
-	r.POST("/category/edit", controller.CategoryEdit)
-	r.POST("/post/add", controller.PostAdd)
-	r.POST("/post/edit", controller.PostEdit)
-	r.GET("/post/get", controller.PostGet)
-	r.GET("/category/get", controller.CategoryGet)
-	r.GET("/category/list", controller.CategoryList)
-
-	r.POST("/post/upload", controller.Upload)
+	r.POST("/admin/category/add", controller.CategoryAdd)
+	r.POST("/admin/category/edit", controller.CategoryEdit)
+	r.POST("/admin/post/add", controller.PostAdd)
+	r.POST("/admin/post/edit", controller.PostEdit)
+	r.GET("/admin/post/get", controller.PostGet)
+	r.GET("/admin/category/get", controller.CategoryGet)
+	r.GET("/admin/category/list", controller.CategoryList)
+	r.POST("/admin/post/upload", controller.Upload)
 
 	admin.GET("/index", controller.Aindex)
 

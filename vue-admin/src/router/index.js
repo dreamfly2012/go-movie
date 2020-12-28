@@ -111,6 +111,34 @@ export const constantRoutes = [
   },
 
 
+  {
+    path: '/tag',
+    component: Layout,
+    name: 'tag',
+    meta: { title: '标签', icon: 'el-icon-s-help' },
+    children: [
+      {
+        path: 'index',
+        name: 'List',
+        component: () => import('@/views/tag/index'),
+        meta: { title: '列表', icon: 'table' }
+      },
+      {
+        path: 'add',
+        name: 'add',
+        component: () => import('@/views/tag/add'),
+        meta: { title: '添加', icon: 'form' }
+      },
+      {
+        path: 'edit',
+        name: 'edit',
+        component: () => import('@/views/tag/edit'),
+        meta: { title: '编辑', icon: 'form' }
+      }
+    ]
+  },
+
+
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

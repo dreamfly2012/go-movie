@@ -10,7 +10,7 @@ export function getList(params) {
 
 export function getItem(params) {
   return request({
-    url: '/post/get',
+    url: '/admin/post/get',
     method: 'get',
     params
   })
@@ -18,7 +18,7 @@ export function getItem(params) {
 
 export function add(params) {
   return request({
-    url: '/post/add',
+    url: '/admin/post/add',
     method: 'post',
     data: params
   })
@@ -27,7 +27,7 @@ export function add(params) {
 
 export function edit(params) {
   return request({
-    url: '/post/edit',
+    url: '/admin/post/edit',
     method: 'post',
     data: params
   })
@@ -36,7 +36,7 @@ export function edit(params) {
 export function uploadFileRequest(params)  {
   return request({
     method: 'post',
-    url: '/post/upload',
+    url: '/admin/post/upload',
     data: params,
     headers: {
       'Content-Type': 'multipart/form-data'

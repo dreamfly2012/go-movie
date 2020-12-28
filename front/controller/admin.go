@@ -32,6 +32,7 @@ func Alogin(c *gin.Context) {
 	)
 }
 
+//APlogin 后台登录
 func APlogin(c *gin.Context) {
 	admin := &model.Admin{}
 	user := model.Admin{}
@@ -185,6 +186,100 @@ func CategoryEdit(c *gin.Context) {
 	db := db.Init()
 
 	db.Model(model.Category{}).Updates(&category)
+
+	c.JSON(200, gin.H{
+		"code": 20000,
+		"data": "success",
+	})
+
+}
+
+//TagList 标签列表
+func TagList(c *gin.Context) {
+	tags := []model.Tag{}
+
+	pageindex := c.DefaultQuery("currentPage", "1")
+
+	currentPage, _ := strconv.Atoi(pageindex)
+
+	db := db.Init()
+	var totalNum int
+
+	pagesize := 10
+	db.Model(model.Tag{}).Count(&totalNum)
+	totalPage := totalNum / pagesize
+
+	db.Model(model.Tag{}).Order("id desc").Offset((currentPage - 1) * pagesize).Limit(pagesize).Find(&tags)
+
+	c.JSON(200, gin.H{
+		"code": 20000,
+		"data": gin.H{
+			"total": totalPage,
+			"data":  tags,
+		},
+	})
+}
+
+//TagGet 获取标签
+func TagGet(c *gin.Context) {
+	tag := &model.Tag{}
+
+	id := c.DefaultQuery("id", "1")
+
+	db := db.Init()
+
+	db.Model(model.Tag{}).Where("id = ? ", id).First(&tag)
+
+	c.JSON(200, gin.H{
+		"code":    20000,
+		"data":    tag,
+		"message": "success",
+	})
+
+}
+
+//TagAdd 添加标签
+func TagAdd(c *gin.Context) {
+	tag := &model.Tag{}
+
+	err := c.ShouldBindJSON(tag)
+
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code": 20001,
+			"data": err,
+		})
+	}
+
+	db := db.Init()
+
+	db.Model(model.Tag{}).Create(tag)
+
+	c.JSON(200, gin.H{
+		"code": 20000,
+		"data": "success",
+	})
+
+}
+
+//TagEdit 修改标签
+func TagEdit(c *gin.Context) {
+	tag := &model.Tag{}
+
+	err := c.ShouldBindJSON(tag)
+
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code": 20001,
+			"data": err,
+		})
+
+		return
+	}
+
+	db := db.Init()
+
+	db.Model(model.Tag{}).Updates(&tag)
 
 	c.JSON(200, gin.H{
 		"code": 20000,

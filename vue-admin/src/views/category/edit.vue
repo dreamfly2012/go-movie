@@ -5,6 +5,9 @@
         <el-input v-model="form.name" />
       </el-form-item>
 
+       <el-form-item label="">
+        <el-input v-model="form.url" />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">保存</el-button>
         <el-button @click="onCancel">取消</el-button>
@@ -23,6 +26,7 @@ export default {
       id:"",
       form: {
         name: '',
+        url:'',
       },
 
     }
@@ -37,7 +41,7 @@ export default {
 
     onSubmit() {
 
-      edit({name:this.form.name,id:this.id}).then(response => {
+      edit({name:this.form.name,id:this.id,url:this.form.url}).then(response => {
 
         if(response.code !== 20000){
             this.$message(response.message)
