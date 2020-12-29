@@ -6,7 +6,7 @@
       </el-form-item>
 
       <el-form-item label="文章简介">
-        <el-input type="textarea" v-model="form.desc"></el-input>
+        <el-input type="textarea" :rows="8" v-model="form.desc"></el-input>
       </el-form-item>
 
       <el-form-item label="文章类别">
@@ -42,6 +42,7 @@ export default {
   data() {
     return {
       id: "",
+      imgFile: [],
       options: [],
       form: {
         id: "",
