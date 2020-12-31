@@ -58,6 +58,8 @@ func Index(c *gin.Context) {
 	latest := []model.Post{}
 	db.Model(model.Post{}).Where("status = ?", 0).Order("id desc").Limit(3).Find(&latest)
 
+	defer db.Close()
+
 	c.HTML(
 
 		http.StatusOK,
@@ -84,6 +86,8 @@ func AjaxArticle(c *gin.Context) {
 	fmt.Println(id)
 	db := db.Init()
 	db.Model(model.Post{}).Where("id = ?", id).UpdateColumn("views", gorm.Expr("views + ?", 1))
+
+	defer db.Close()
 	c.JSON(200, gin.H{
 		"code": 20000,
 		"data": "success",
@@ -144,6 +148,8 @@ func Category(c *gin.Context) {
 
 	latest := []model.Post{}
 	db.Model(model.Post{}).Where("status = ?", 0).Order("id desc").Limit(3).Find(&latest)
+
+	defer db.Close()
 
 	c.HTML(
 
@@ -222,6 +228,8 @@ func Tag(c *gin.Context) {
 	latest := []model.Post{}
 	db.Model(model.Post{}).Where("status = ?", 0).Order("id desc").Limit(3).Find(&latest)
 
+	defer db.Close()
+
 	c.HTML(
 
 		http.StatusOK,
@@ -272,6 +280,8 @@ func Article(c *gin.Context) {
 
 	latest := []model.Post{}
 	db.Model(model.Post{}).Where("status = ?", 0).Order("id desc").Limit(3).Find(&latest)
+
+	defer db.Close()
 
 	c.HTML(
 		http.StatusOK,

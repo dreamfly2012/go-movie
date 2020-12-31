@@ -35,6 +35,6 @@ func Init() *gorm.DB {
 		// 	}
 		// }
 	}
-	defer db.Close()
+	
 	return db
 }
