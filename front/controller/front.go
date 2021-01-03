@@ -13,8 +13,7 @@ import (
 
 //Index  首页控制器
 func Index(c *gin.Context) {
-	db := db.Init()
-
+	db := db.GetDb()
 	pagesize := 5
 
 	posts := []model.Post{}
@@ -34,6 +33,7 @@ func Index(c *gin.Context) {
 
 	prevID = pageindex - 1
 	if prevID == 0 {
+
 		prevLink = "/page/1"
 	} else {
 		prevLink = "/page/" + strconv.Itoa(prevID)
@@ -58,8 +58,6 @@ func Index(c *gin.Context) {
 	latest := []model.Post{}
 	db.Model(model.Post{}).Where("status = ?", 0).Order("id desc").Limit(3).Find(&latest)
 
-	defer db.Close()
-
 	c.HTML(
 
 		http.StatusOK,
@@ -82,12 +80,13 @@ func Index(c *gin.Context) {
 
 //AjaxArticle 更新阅读
 func AjaxArticle(c *gin.Context) {
+	db := db.GetDb()
+
 	id := c.Param("id")
 	fmt.Println(id)
-	db := db.Init()
+
 	db.Model(model.Post{}).Where("id = ?", id).UpdateColumn("views", gorm.Expr("views + ?", 1))
 
-	defer db.Close()
 	c.JSON(200, gin.H{
 		"code": 20000,
 		"data": "success",
@@ -96,8 +95,7 @@ func AjaxArticle(c *gin.Context) {
 
 //Category  分类控制器
 func Category(c *gin.Context) {
-	db := db.Init()
-
+	db := db.GetDb()
 	pagesize := 5
 
 	posts := []model.Post{}
@@ -149,8 +147,6 @@ func Category(c *gin.Context) {
 	latest := []model.Post{}
 	db.Model(model.Post{}).Where("status = ?", 0).Order("id desc").Limit(3).Find(&latest)
 
-	defer db.Close()
-
 	c.HTML(
 
 		http.StatusOK,
@@ -173,8 +169,7 @@ func Category(c *gin.Context) {
 
 //Tag  标签控制器
 func Tag(c *gin.Context) {
-	db := db.Init()
-
+	db := db.GetDb()
 	pagesize := 5
 
 	posts := []model.Post{}
@@ -228,8 +223,6 @@ func Tag(c *gin.Context) {
 	latest := []model.Post{}
 	db.Model(model.Post{}).Where("status = ?", 0).Order("id desc").Limit(3).Find(&latest)
 
-	defer db.Close()
-
 	c.HTML(
 
 		http.StatusOK,
@@ -252,6 +245,7 @@ func Tag(c *gin.Context) {
 
 //About  关于
 func About(c *gin.Context) {
+
 	c.HTML(
 		// Set the HTTP status to 200 (OK)
 		http.StatusOK,
@@ -266,7 +260,7 @@ func About(c *gin.Context) {
 
 //Article 文章详情页
 func Article(c *gin.Context) {
-	db := db.Init()
+	db := db.GetDb()
 	id := c.Param("id")
 	//fmt.Print(id)
 	post := model.Post{}
@@ -280,8 +274,6 @@ func Article(c *gin.Context) {
 
 	latest := []model.Post{}
 	db.Model(model.Post{}).Where("status = ?", 0).Order("id desc").Limit(3).Find(&latest)
-
-	defer db.Close()
 
 	c.HTML(
 		http.StatusOK,

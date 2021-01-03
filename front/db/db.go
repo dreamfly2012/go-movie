@@ -7,8 +7,11 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-//Init DB
-func Init() *gorm.DB {
+//DB is global connection
+var DB *gorm.DB
+
+//引入包的时候自动初始化
+func init() {
 	myConfig := new(util.Config)
 	myConfig.InitConfig("config.ini")
 	database := myConfig.Read("database", "db")
@@ -18,23 +21,21 @@ func Init() *gorm.DB {
 	port := myConfig.Read("database", "port")
 
 	//"user:password@/dbname?charset=utf8&parseTime=True&loc=Local"
+	var err error
+	DB, err = gorm.Open("mysql", username+":"+password+"@tcp("+host+":"+port+")/"+database+"?charset=utf8&parseTime=True&loc=Local")
 
-	db, err := gorm.Open("mysql", username+":"+password+"@tcp("+host+":"+port+")/"+database+"?charset=utf8&parseTime=True&loc=Local")
-	//defer db.Close()
 	if err != nil {
-		panic(err)
-	} else {
-		// 全局禁用表名复数
-		db.SingularTable(true) // 如果设置为true,`User`的默认表名为`user`,使用`TableName`设置的表名不受影响
-
-		// 一般不会直接用CreateTable创建表
-		// 检查模型`User`表是否存在，否则为模型`User`创建表
-		// if !db.HasTable(&User{}) {
-		// 	if err := db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&User{}).Error; err != nil {
-		// 		panic(err)
-		// 	}
-		// }
+		panic("数据库连接失败")
 	}
-	
-	return db
+
+	DB.SingularTable(true)
+
+	DB.DB().SetMaxOpenConns(20) //设置数据库连接池最大连接数
+	DB.DB().SetMaxIdleConns(20)
+
+}
+
+//GetDb 返回全局变量DB
+func GetDb() *gorm.DB {
+	return DB
 }

@@ -34,6 +34,7 @@ func Alogin(c *gin.Context) {
 
 //APlogin 后台登录
 func APlogin(c *gin.Context) {
+	db := db.GetDb()
 	admin := &model.Admin{}
 	user := model.Admin{}
 	err := c.ShouldBindJSON(admin)
@@ -46,11 +47,7 @@ func APlogin(c *gin.Context) {
 		})
 	}
 
-	db := db.Init()
-
 	result := db.Model(model.Admin{}).Where("username = ? and password = ?", admin.Username, admin.Password).First(&user).RecordNotFound()
-
-	db.Close()
 
 	if result == true {
 		c.JSON(200, gin.H{
@@ -78,13 +75,13 @@ func AInfo(c *gin.Context) {
 
 //AList 列表
 func AList(c *gin.Context) {
+	db := db.GetDb()
 	posts := []model.Post{}
 
 	pageindex := c.DefaultQuery("currentPage", "1")
 
 	currentPage, _ := strconv.Atoi(pageindex)
 
-	db := db.Init()
 	var totalNum int
 
 	pagesize := 10
@@ -92,8 +89,6 @@ func AList(c *gin.Context) {
 	totalPage := totalNum / pagesize
 
 	db.Model(model.Post{}).Order("id desc").Offset((currentPage - 1) * pagesize).Limit(pagesize).Find(&posts)
-
-	db.Close()
 
 	c.JSON(200, gin.H{
 		"code": 20000,
@@ -106,13 +101,13 @@ func AList(c *gin.Context) {
 
 //CategoryList 分类列表
 func CategoryList(c *gin.Context) {
+	db := db.GetDb()
 	categories := []model.Category{}
 
 	pageindex := c.DefaultQuery("currentPage", "1")
 
 	currentPage, _ := strconv.Atoi(pageindex)
 
-	db := db.Init()
 	var totalNum int
 
 	pagesize := 10
@@ -120,8 +115,6 @@ func CategoryList(c *gin.Context) {
 	totalPage := totalNum / pagesize
 
 	db.Model(model.Category{}).Order("id desc").Offset((currentPage - 1) * pagesize).Limit(pagesize).Find(&categories)
-
-	db.Close()
 
 	c.JSON(200, gin.H{
 		"code": 20000,
@@ -134,15 +127,12 @@ func CategoryList(c *gin.Context) {
 
 //CategoryGet 获取
 func CategoryGet(c *gin.Context) {
+	db := db.GetDb()
 	category := &model.Category{}
 
 	id := c.DefaultQuery("id", "1")
 
-	db := db.Init()
-
 	db.Model(model.Category{}).Where("id = ? ", id).First(&category)
-
-	db.Close()
 
 	c.JSON(200, gin.H{
 		"code":    20000,
@@ -154,6 +144,7 @@ func CategoryGet(c *gin.Context) {
 
 //CategoryAdd 添加分类
 func CategoryAdd(c *gin.Context) {
+	db := db.GetDb()
 	category := &model.Category{}
 
 	err := c.ShouldBindJSON(category)
@@ -165,11 +156,7 @@ func CategoryAdd(c *gin.Context) {
 		})
 	}
 
-	db := db.Init()
-
 	db.Model(model.Category{}).Create(category)
-
-	db.Close()
 
 	c.JSON(200, gin.H{
 		"code": 20000,
@@ -180,6 +167,7 @@ func CategoryAdd(c *gin.Context) {
 
 //CategoryEdit 修改分类
 func CategoryEdit(c *gin.Context) {
+	db := db.GetDb()
 	category := &model.Category{}
 
 	err := c.ShouldBindJSON(category)
@@ -193,11 +181,7 @@ func CategoryEdit(c *gin.Context) {
 		return
 	}
 
-	db := db.Init()
-
 	db.Model(model.Category{}).Where("id = ?", category.ID).Updates(&category)
-
-	db.Close()
 
 	c.JSON(200, gin.H{
 		"code": 20000,
@@ -208,13 +192,13 @@ func CategoryEdit(c *gin.Context) {
 
 //TagList 标签列表
 func TagList(c *gin.Context) {
+	db := db.GetDb()
 	tags := []model.Tag{}
 
 	pageindex := c.DefaultQuery("currentPage", "1")
 
 	currentPage, _ := strconv.Atoi(pageindex)
 
-	db := db.Init()
 	var totalNum int
 
 	pagesize := 10
@@ -222,8 +206,6 @@ func TagList(c *gin.Context) {
 	totalPage := totalNum / pagesize
 
 	db.Model(model.Tag{}).Order("id desc").Offset((currentPage - 1) * pagesize).Limit(pagesize).Find(&tags)
-
-	db.Close()
 
 	c.JSON(200, gin.H{
 		"code": 20000,
@@ -236,15 +218,12 @@ func TagList(c *gin.Context) {
 
 //TagGet 获取标签
 func TagGet(c *gin.Context) {
+	db := db.GetDb()
 	tag := &model.Tag{}
 
 	id := c.DefaultQuery("id", "1")
 
-	db := db.Init()
-
 	db.Model(model.Tag{}).Where("id = ? ", id).First(&tag)
-
-	db.Close()
 
 	c.JSON(200, gin.H{
 		"code":    20000,
@@ -266,12 +245,9 @@ func TagAdd(c *gin.Context) {
 			"data": err,
 		})
 	}
-
-	db := db.Init()
+	db := db.GetDb()
 
 	db.Model(model.Tag{}).Create(tag)
-
-	db.Close()
 
 	c.JSON(200, gin.H{
 		"code": 20000,
@@ -295,13 +271,11 @@ func TagEdit(c *gin.Context) {
 		return
 	}
 
-	db := db.Init()
-
 	fmt.Println(tag)
 
-	db.Model(model.Tag{}).Where("id = ?", tag.ID).Updates(&tag)
+	db := db.GetDb()
 
-	db.Close()
+	db.Model(model.Tag{}).Where("id = ?", tag.ID).Updates(&tag)
 
 	c.JSON(200, gin.H{
 		"code": 20000,
@@ -316,11 +290,9 @@ func PostGet(c *gin.Context) {
 
 	id := c.DefaultQuery("id", "1")
 
-	db := db.Init()
+	db := db.GetDb()
 
 	db.Model(model.Post{}).Where("id = ? ", id).First(&post)
-
-	db.Close()
 
 	c.JSON(200, gin.H{
 		"code":    20000,
@@ -342,12 +314,8 @@ func PostAdd(c *gin.Context) {
 			"data": err,
 		})
 	}
-
-	db := db.Init()
-
+	db := db.GetDb()
 	db.Model(model.Post{}).Create(post)
-
-	db.Close()
 
 	c.JSON(200, gin.H{
 		"code": 20000,
@@ -370,11 +338,9 @@ func PostEdit(c *gin.Context) {
 		return
 	}
 
-	db := db.Init()
+	db := db.GetDb()
 
 	db.Model(model.Post{}).Omit("id").Where("id = ? ", post.ID).Updates(post)
-
-	db.Close()
 
 	c.JSON(200, gin.H{
 		"code": 20000,

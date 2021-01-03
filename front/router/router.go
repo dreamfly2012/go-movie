@@ -19,8 +19,8 @@ import (
 //获取分类名称
 func getCategoryName(cid int) string {
 	category := model.Category{}
-	db := db.Init()
-	db.Model(model.Category{}).Where("id = ?", cid).First(&category)
+
+	db.DB.Model(model.Category{}).Where("id = ?", cid).First(&category)
 	return category.Name
 }
 
