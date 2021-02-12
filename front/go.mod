@@ -14,7 +14,7 @@ require (
 	github.com/mdempsky/gocode v0.0.0-20200405233807-4acdcbdea79d // indirect
 	github.com/microcosm-cc/bluemonday v1.0.4 // indirect
 	github.com/russross/blackfriday v1.6.0 // indirect
-	github.com/silenceper/gowatch v0.0.0-20201011022207-2725a3e5b521 // indirect
+	github.com/silenceper/gowatch v0.0.0-20210208075621-ebe297c3f060 // indirect
 	github.com/stretchr/testify v1.4.0
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.16
 	github.com/wangsongyan/wblog v0.0.0-20190212134921-875ef9a6cda0

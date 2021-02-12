@@ -17,7 +17,6 @@ func Index(c *gin.Context) {
 	pagesize := 5
 
 	posts := []model.Post{}
-
 	var pageindex int
 	var prevID int
 	var nextID int
@@ -76,6 +75,81 @@ func Index(c *gin.Context) {
 			"total_page":   totalPage,
 		},
 	)
+}
+
+//Search article search
+func Search(c *gin.Context) {
+	keywords := c.Query("keywords")
+
+	db := db.GetDb()
+	pagesize := 5
+
+	var pageindex int
+	var prevID int
+	var nextID int
+	var prevLink string
+	var nextLink string
+	var totalNum int
+
+	posts := []model.Post{}
+
+	id := c.Query("page")
+	if id != "" {
+		pageindex, _ = strconv.Atoi(id)
+	} else {
+		pageindex = 1
+	}
+
+	prevID = pageindex - 1
+	if prevID == 0 {
+		prevLink = "/search/?keywords=" + keywords + "&page=1"
+	} else {
+		prevLink = "/search/?keywords=" + keywords + "&page=" + strconv.Itoa(prevID)
+	}
+	nextID = pageindex + 1
+	db.Model(model.Post{}).Where("title like ?", "%"+keywords+"%").Count(&totalNum)
+	fmt.Println(totalNum)
+	fmt.Println(pagesize)
+	totalPage := totalNum / pagesize
+	if totalPage == 0 {
+		totalPage = 1
+	}
+	if nextID > totalPage {
+		nextLink = "/search/?keywords=" + keywords + "&page=" + strconv.Itoa(totalPage)
+	} else {
+		nextLink = "/search/?keywords=" + keywords + "&page=" + strconv.Itoa(nextID)
+	}
+
+	db.Model(model.Post{}).Where("title like ?", "%"+keywords+"%").Order("id desc").Offset((pageindex - 1) * pagesize).Limit(pagesize).Find(&posts)
+
+	categories := []model.Category{}
+	db.Model(model.Category{}).Order("id desc").Find(&categories)
+
+	tags := []model.Tag{}
+	db.Model(model.Tag{}).Order("id desc").Find(&tags)
+
+	latest := []model.Post{}
+	db.Model(model.Post{}).Where("status = ?", 0).Order("id desc").Limit(3).Find(&latest)
+
+	c.HTML(
+
+		http.StatusOK,
+
+		"search.html",
+
+		gin.H{
+			"title":        "电影宇宙",
+			"posts":        posts,
+			"tags":         tags,
+			"latest":       latest,
+			"categories":   categories,
+			"prev_link":    prevLink,
+			"next_link":    nextLink,
+			"current_page": pageindex,
+			"total_page":   totalPage,
+		},
+	)
+
 }
 
 //AjaxArticle 更新阅读

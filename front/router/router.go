@@ -52,6 +52,7 @@ func Init() {
 	r.GET("/about", controller.About)
 	r.GET("/article/:id", controller.Article)
 	r.GET("/page/:id", controller.Index)
+	r.GET("/search/", controller.Search)
 
 	r.GET("/category/:url/:id", controller.Category)
 	r.GET("/tag/:url/:id", controller.Tag)
