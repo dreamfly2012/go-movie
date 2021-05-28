@@ -1,5 +1,13 @@
 <template>
   <div class="app-container">
+    <el-form :label-position="labelPosition" label-width="80px" >
+  <el-form-item label="标题">
+    <el-input v-model="name"></el-input>
+  </el-form-item>
+    <el-form-item>
+    <el-button type="primary" @click="search">查询</el-button>
+  </el-form-item>
+</el-form>
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -10,7 +18,7 @@
     >
       <el-table-column align="center" label="ID" width="95">
         <template slot-scope="scope">
-          {{ scope.$index + 1 }}
+          {{ scope.row  }}
         </template>
       </el-table-column>
       <el-table-column label="Title">
@@ -67,6 +75,7 @@ export default {
   },
   data() {
     return {
+      name:"",
       list: null,
       total:0,//默认数据总数
       pagesize:10,//每页的数据条数
@@ -97,6 +106,9 @@ export default {
     edit(row){
       console.log(row)
       this.$router.push("/list/edit?id="+row.id);
+    },
+    search(){
+      console.log(this.name)
     },
     fetchData() {
       this.listLoading = true

@@ -30,8 +30,8 @@ func init() {
 
 	DB.SingularTable(true)
 
-	DB.DB().SetMaxOpenConns(20) //设置数据库连接池最大连接数
-	DB.DB().SetMaxIdleConns(20)
+	DB.DB().SetMaxOpenConns(10) //设置数据库连接池最大连接数
+	DB.DB().SetMaxIdleConns(10)
 
 }
 
