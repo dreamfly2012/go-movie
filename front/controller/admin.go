@@ -323,6 +323,27 @@ func PostAdd(c *gin.Context) {
 	})
 }
 
+//PostDel 文章删除
+func PostDel(c *gin.Context) {
+	post := &model.Post{}
+
+	err := c.ShouldBindJSON(post)
+
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code": 20001,
+			"data": err,
+		})
+	}
+	db := db.GetDb()
+	db.Model(model.Post{}).Delete(post)
+
+	c.JSON(200, gin.H{
+		"code": 20000,
+		"data": "success",
+	})
+}
+
 //PostEdit 文章修改
 func PostEdit(c *gin.Context) {
 	post := &model.Post{}

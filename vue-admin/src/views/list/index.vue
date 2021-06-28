@@ -18,7 +18,7 @@
     >
       <el-table-column align="center" label="ID" width="95">
         <template slot-scope="scope">
-          {{ scope.row  }}
+          {{ scope.row.id  }}
         </template>
       </el-table-column>
       <el-table-column label="Title">
@@ -45,6 +45,9 @@
           size="mini"
           @click="edit(scope.row)">编辑</el-button>
 
+            <el-button
+          size="mini"
+          @click="del(scope.row)">删除</el-button>
           </template>
       </el-table-column>
     </el-table>
@@ -60,7 +63,7 @@
 </template>
 
 <script>
-import { getList } from '@/api/post'
+import { getList,DelList } from '@/api/post'
 
 export default {
   filters: {
@@ -106,6 +109,13 @@ export default {
     edit(row){
       console.log(row)
       this.$router.push("/list/edit?id="+row.id);
+    },
+    del(row){
+      console.log(row)
+      this.listLoading = true
+      DelList({id:row.id}).then(response=>{
+        this.listLoading = false
+      })
     },
     search(){
       console.log(this.name)

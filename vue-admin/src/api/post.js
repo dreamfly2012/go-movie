@@ -24,6 +24,14 @@ export function add(params) {
   })
 
 }
+export function DelList(params) {
+  return request({
+    url: '/admin/post/del',
+    method: 'post',
+    data: params
+  })
+
+}
 
 export function edit(params) {
   return request({

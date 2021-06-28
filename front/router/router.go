@@ -83,6 +83,7 @@ func Init() {
 	r.POST("/admin/post/add", controller.PostAdd)
 	r.POST("/admin/post/edit", controller.PostEdit)
 	r.GET("/admin/post/get", controller.PostGet)
+	r.GET("/admin/post/del", controller.PostDel)
 	r.GET("/admin/category/get", controller.CategoryGet)
 	r.GET("/admin/category/list", controller.CategoryList)
 	r.POST("/admin/category/add", controller.CategoryAdd)
