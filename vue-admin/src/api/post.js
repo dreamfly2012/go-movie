@@ -8,6 +8,13 @@ export function getList(params) {
   })
 }
 
+export function searchList(params) {
+  return request({
+    url: '/admin/searchlist',
+    method: 'get',
+    params
+  })
+}
 export function getItem(params) {
   return request({
     url: '/admin/post/get',

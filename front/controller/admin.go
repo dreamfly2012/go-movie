@@ -99,6 +99,33 @@ func AList(c *gin.Context) {
 	})
 }
 
+//ASearchList 列表
+func ASearchList(c *gin.Context) {
+	db := db.GetDb()
+	posts := []model.Post{}
+
+	pageindex := c.DefaultQuery("currentPage", "1")
+	title := c.DefaultQuery("title", "")
+
+	currentPage, _ := strconv.Atoi(pageindex)
+
+	var totalNum int
+
+	pagesize := 10
+	db.Model(model.Post{}).Count(&totalNum)
+	totalPage := totalNum / pagesize
+
+	db.Model(model.Post{}).Where("title like ?", "%"+title+"%").Order("id desc").Offset((currentPage - 1) * pagesize).Limit(pagesize).Find(&posts)
+
+	c.JSON(200, gin.H{
+		"code": 20000,
+		"data": gin.H{
+			"total": totalPage,
+			"data":  posts,
+		},
+	})
+}
+
 //CategoryList 分类列表
 func CategoryList(c *gin.Context) {
 	db := db.GetDb()
@@ -315,6 +342,7 @@ func PostAdd(c *gin.Context) {
 		})
 	}
 	db := db.GetDb()
+	post.Created = time.Now()
 	db.Model(model.Post{}).Create(post)
 
 	c.JSON(200, gin.H{

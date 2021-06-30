@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { getList,DelList } from '@/api/post'
+import { getList,searchList,DelList } from '@/api/post'
 
 export default {
   filters: {
@@ -107,18 +107,21 @@ export default {
       })
     },
     edit(row){
-      console.log(row)
       this.$router.push("/list/edit?id="+row.id);
     },
     del(row){
-      console.log(row)
-      this.listLoading = true
       DelList({id:row.id}).then(response=>{
-        this.listLoading = false
+        this.fetchData()
       })
     },
     search(){
       console.log(this.name)
+      this.listLoading = true
+      searchList({titile:this.name}).then(response => {
+        this.list = response.data.data
+        this.total = response.data.total
+        this.listLoading = false
+      })
     },
     fetchData() {
       this.listLoading = true

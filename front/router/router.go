@@ -79,11 +79,12 @@ func Init() {
 	r.POST("/admin/login", controller.APlogin)
 	r.GET("/admin/info", controller.AInfo)
 	r.GET("/admin/list", controller.AList)
+	r.GET("/admin/searchlist", controller.ASearchList)
 
 	r.POST("/admin/post/add", controller.PostAdd)
 	r.POST("/admin/post/edit", controller.PostEdit)
 	r.GET("/admin/post/get", controller.PostGet)
-	r.GET("/admin/post/del", controller.PostDel)
+	r.POST("/admin/post/del", controller.PostDel)
 	r.GET("/admin/category/get", controller.CategoryGet)
 	r.GET("/admin/category/list", controller.CategoryList)
 	r.POST("/admin/category/add", controller.CategoryAdd)
