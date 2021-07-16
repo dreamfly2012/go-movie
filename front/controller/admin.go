@@ -114,7 +114,7 @@ func ASearchList(c *gin.Context) {
 	pagesize := 10
 	db.Model(model.Post{}).Count(&totalNum)
 	totalPage := totalNum / pagesize
-
+	fmt.Println(title)
 	db.Model(model.Post{}).Where("title like ?", "%"+title+"%").Order("id desc").Offset((currentPage - 1) * pagesize).Limit(pagesize).Find(&posts)
 
 	c.JSON(200, gin.H{
