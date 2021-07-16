@@ -117,7 +117,7 @@ export default {
     search(){
       console.log(this.name)
       this.listLoading = true
-      searchList({titile:this.name}).then(response => {
+      searchList({title:this.name}).then(response => {
         this.list = response.data.data
         this.total = response.data.total
         this.listLoading = false
