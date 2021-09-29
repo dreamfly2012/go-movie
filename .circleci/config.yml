@@ -32,6 +32,7 @@ jobs:
           name: Run tests
           command: |
             mkdir -p /tmp/test-reports
+            mv config.demo.ini config.ini
             go test --json >> /tmp/test-reports/unit-tests.json
           working_directory: ~/repo/front
       - store_artifacts:
