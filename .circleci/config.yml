@@ -5,14 +5,6 @@ jobs:
     working_directory: ~/repo
     docker:
       - image: circleci/golang:1.15.8
-      
-      - image: circleci/mysql:5.6.50
-        
-        environment:
-          MYSQL_DATABASE: movie
-          MYSQL_USER: golang
-          MYSQL_PASSWORD: test
-      
     steps:
       - checkout
     
@@ -25,8 +17,6 @@ jobs:
           name: Run tests
           command: |
             mkdir -p /tmp/test-reports
-            mv config.demo.ini config.ini
-            go test -v
-          working_directory: ~/repo/front
+            gotestsum --junitfile /tmp/test-reports/unit-tests.xml
       - store_test_results:
           path: /tmp/test-reports
