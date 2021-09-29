@@ -10,8 +10,8 @@ jobs:
         
         environment:
           MYSQL_DATABASE: movie
-          MYSQL_USER: root
-          MYSQL_PASSWORD: root
+          MYSQL_USER: golang
+          MYSQL_PASSWORD: test
       
     steps:
       - checkout
