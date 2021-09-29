@@ -6,7 +6,7 @@ jobs:
     docker:
       - image: circleci/golang:1.15.8
       
-      - image: circleci/mysql:5.6.0
+      - image: circleci/mysql:5.6.50
         
         environment:
           MYSQL_DATABASE: movie
