@@ -362,11 +362,9 @@ img {
 }
 
 .widget-recent-posts ul li::before {
-    content: '\f3d3';
-    font-family: "Ionicons";
+    content: '🔥';
     position: absolute;
-    left: -17px;
-    top: 3px;
+    left: -20px;
     font-size: 16px;
     color: #000;
 }
@@ -408,11 +406,10 @@ img {
 }
 
 .widget-category ul li::before {
-    content: '\f3fe';
-    font-family: "Ionicons";
+    content: '⛳';
     position: absolute;
-    left: -25px;
-    top: 1px;
+    left: -30px;
+    top: 0px;
     font-size: 18px;
     color: #000;
 }

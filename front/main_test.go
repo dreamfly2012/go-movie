@@ -16,5 +16,5 @@ func TestConvert(t *testing.T) {
 
 	fmt.Println(c)
 
-	assert.Equal(t, 0, c)
+	assert.Equal(t, 1, c)
 }
